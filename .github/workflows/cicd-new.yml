@@ -6,7 +6,7 @@ on:
 # commit message with format:
 #  repo path: branch
 # e.g: vdx-vn/cuu-long:dev
-# #1:
+# #1:.
 # prepare venv - b
 
 jobs:
