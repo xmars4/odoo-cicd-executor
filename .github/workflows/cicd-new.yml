@@ -14,10 +14,13 @@ jobs:
     pylint-test:
         runs-on: ubuntu-latest
         environment: vdx-vn/cuu-long
+        env:
+            v1: ${{vars.V1}}
+            s1: ${{secrets.S1}}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
             - name: check variables
               run: |
-                  echo ${S1}
-                  echo ${V1}
+                  echo ${v1}
+                  echo ${s1}
