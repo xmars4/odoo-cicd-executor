@@ -12,14 +12,16 @@ on:
 jobs:
     pylint-test:
         runs-on: ubuntu-latest
-        environment: vdx-vn/cuu-long
-        env:
-            v1: ${{vars.V1}}
-            s1: ${{secrets.S1}}
+        environment: ${{github.event.head_commit.message}}
         steps:
-            - name: Checkout
+            - name: Checkout private repo
               uses: actions/checkout@v4
-            - name: check variables
+              with:
+                  repository: ${{ vars.PATH }}
+                  token: ${{ secrets.ACCESS_TOKEN }}
+                  path: ${{ github.workspace }}/private_repo_source
+                  ref: ${{ vars.BRANCH }}
+                  fetch-depth: 1
+            - name: test
               run: |
-                  echo ${v1}
-                  echo ${s1}
+                  ls ${{github.workspace}}/private_repo_source
