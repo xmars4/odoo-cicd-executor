@@ -1,0 +1,19 @@
+name: ci/cd
+on:
+    push:
+        branches: "production"
+
+# commit message with format:
+#  repo path: branch
+# e.g: vdx-vn/cuu-long:dev
+
+# #1:
+# prepare venv - b
+
+jobs:
+    pylint-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+        environment: vdx-vn/cuu-long
