@@ -16,6 +16,7 @@ jobs:
         steps:
             - name: Checkout private repo
               uses: actions/checkout@v4
+              # fixme: move ACCESS_TOKEN to global config (instead of environment)
               with:
                   repository: ${{ vars.PATH }}
                   token: ${{ secrets.ACCESS_TOKEN }}

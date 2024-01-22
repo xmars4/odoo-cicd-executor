@@ -27,3 +27,11 @@ ssh-keygen -t ecdsa -b 521
 3. Deploy
 
 - follow instruction in the file [.deploy/README.md](.deploy/README.md)
+
+## Problems & Solution
+
+1. Non-expired PAT (person access token) when checkout other repo
+
+![img/erro_non_expired_token.png](img/erro_non_expired_token.png)
+
+Solutions: Set expired date for PAT
