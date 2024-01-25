@@ -21,3 +21,4 @@ jobs:
         with:
             repo_name: vdx-vn/cuu-long
             action: ${{ github.event.head_commit.message }}
+        secrets: inherit
