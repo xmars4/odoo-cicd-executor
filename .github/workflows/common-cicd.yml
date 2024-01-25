@@ -1,8 +1,15 @@
 name: ci/cd
 on:
-    push:
-        branches: "p_u_p"
-
+    workflow_call:
+        inputs:
+            repo_name:
+                required: true
+                type: string
+            action:
+                required: true
+                type: string
+# fixme: convert this one to reusable workflow, and trigger it specific workflow for
+# each repo
 env:
     # common environment variables
     REPO_PATH: ${{ github.workspace }}
@@ -44,7 +51,8 @@ env:
 jobs:
     # pylint-test:
     #     runs-on: ubuntu-latest
-    #     environment: ${{github.event.head_commit.message}}
+    #     environment: ${{inputs.repo_name}}
+    #     if: inputs.action == 'test'
     #     steps:
     #         - name: Checkout private repo
     #           uses: actions/checkout@v4
@@ -79,7 +87,8 @@ jobs:
 
     unit-test-at-install:
         runs-on: ubuntu-latest
-        environment: ${{github.event.head_commit.message}}
+        environment: ${{inputs.repo_name}}
+        if: inputs.action == 'test'
         # needs: [pylint-test]
         steps:
             - name: Checkout private repo
@@ -111,7 +120,8 @@ jobs:
 
     unit-test-post-install:
         runs-on: ubuntu-latest
-        environment: ${{github.event.head_commit.message}}
+        environment: ${{inputs.repo_name}}
+        if: inputs.action == 'test'
         # needs: [pylint-test]
         steps:
             - name: Checkout private repo
@@ -145,8 +155,8 @@ jobs:
     integration-test:
         runs-on: ubuntu-latest
         # fixme: trigger by special commit
-        if: github.event.action == 'closed' && github.event.pull_request.merged == true
-        environment: ${{github.event.head_commit.message}}
+        if: inputs.action == 'deploy'
+        environment: ${{inputs.repo_name}}
         needs: [unit-test-post-install, unit-test-at-install]
         env:
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
@@ -218,8 +228,7 @@ jobs:
 
     deploy-server:
         runs-on: ubuntu-latest
-        if: github.event.action == 'closed' && github.event.pull_request.merged == true
-        environment: ${{github.event.head_commit.message}}
+        environment: ${{inputs.repo_name}}
         needs: [integration-test]
         env:
             SERVER_DEPLOY_SCRIPT_PATH: /tmp/odoo/cicd/${{ github.repository_id }}/deploy.sh

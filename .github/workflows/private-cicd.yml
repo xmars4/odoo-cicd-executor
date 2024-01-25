@@ -1,0 +1,11 @@
+name: Execute CICD for private Odoo repo
+on:
+    push:
+        branches: [production]
+
+jobs:
+    call_common_cicd:
+        uses: ./.github/workflows/common-cicd.yml
+        with:
+            repo_name: vdx-vn/cuu-long
+            action: ${{ github.event.head_commit.message }}
