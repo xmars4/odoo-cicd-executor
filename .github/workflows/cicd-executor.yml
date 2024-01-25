@@ -3,13 +3,8 @@ on:
     push:
         branches: "production"
 
-# commit message with format:
-#  repo path: branch
-# e.g: vdx-vn/cuu-long:dev
-# #1:.
-# prepare venv - b
-
 env:
+    # common environment variables
     REPO_PATH: ${{ github.workspace }}
     ODOO_CUSTOM_ADDONS_PATH: ${{ github.workspace }}
     ODOO_CONFIG_FILE: ${{ github.workspace }}/.github/odoo/etc/odoo.conf
@@ -23,23 +18,24 @@ env:
     CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
 
+    ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    HEY: ${{vars.BRANCH}}
+    # specific environment variables for each repo
+    # get those values from designated 'environment' in jobs
+    REPOSITORY: ${{ vars.PATH }}
+    BRANCH: ${{ vars.BRANCH }}
+    ODOO_IMAGE_TAG: ${{ vars.ODOO_IMAGE_TAG }}
+    DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
 
 jobs:
     pylint-test:
         runs-on: ubuntu-latest
         environment: ${{github.event.head_commit.message}}
-        env:
-            REPOSITORY: ${{vars.PATH}}
-            ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-            BRANCH: ${{vars.BRANCH}}
         steps:
             - name: Checkout private repo
               uses: actions/checkout@v4
-              # fixme: move ACCESS_TOKEN to global config (instead of environment)
               with:
                   repository: ${{ env.REPOSITORY }}
                   token: ${{ env.ACCESS_TOKEN }}
