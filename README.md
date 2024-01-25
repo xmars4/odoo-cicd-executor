@@ -1,37 +1,51 @@
-
 # ODOO + Github Action
 
-1. Build image
+Execute CICD workflow for private Odoo repo
 
-- follow instruction in the file [.build/README.md](.build/README.md)
+## Setup
 
-2. Setup CI/CD
+1. **Build image**
 
-- #### TODO : update descript ci/cd here
+   - Follow instructions in the file [.build/README.md](.build/README.md)
 
-- Sometime we cannot authenticate by ssh
+1. **Setup CI/CD**
 
-```
-https://github.com/garygrossgarten/github-action-ssh/issues/20
-    at SSH2Stream.Writable.write (node:internal/streams/writable:336:10) {
-  level: 'client-authentication'
-```
+   - \# TODO: Update description of CI/CD here
 
-- Solution:
+   - Sometimes we cannot authenticate by SSH
 
-```bash
-# gen ssh-key by different algorithm
-ssh-keygen -t ecdsa -b 521
-```
+     ```plaintext
+     <https://github.com/garygrossgarten/github-action-ssh/issues/20>
+       at SSH2Stream.Writable.write (node:internal/streams/writable:336:10) {
+     level: 'client-authentication'
+     ```
 
-3. Deploy
+   - **Solution:**
 
-- follow instruction in the file [.deploy/README.md](.deploy/README.md)
+     ```bash
+     # Generate SSH key using a different algorithm
+     ssh-keygen -t ecdsa -b 521
+     ```
 
-## Problems & Solution
+1. **Deploy**
 
-1. Non-expired PAT (person access token) when checkout other repo
+   - Follow instructions in the file [.deploy/README.md](.deploy/README.md)
 
-![img/erro_non_expired_token.png](img/erro_non_expired_token.png)
+## Problems & Solutions
 
-Solutions: Set expired date for PAT
+1. **Non-expired PAT (personal access token) when checking out other repo**
+
+    ![img/erro_non_expired_token.png](img/erro_non_expired_token.png)
+
+- **Solution:** Set an expiration date for the PAT
+
+1. **Cannot authenticate by SSH**
+
+   ![img/erro_ssh_action.png](img/erro_ssh_action.png)
+
+- **Solution**:
+
+    ```bash
+     # Generate SSH key using a different algorithm
+     ssh-keygen -t ecdsa -b 521
+     ```

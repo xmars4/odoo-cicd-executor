@@ -9,10 +9,34 @@ on:
 # #1:.
 # prepare venv - b
 
+env:
+    # common environment variables
+    ODOO_CUSTOM_ADDONS_PATH: ${{ github.workspace }}
+    ODOO_CONFIG_FILE: ${{ github.workspace }}/.github/odoo/etc/odoo.conf
+    ODOO_DOCKER_COMPOSE_PATH: ${{ github.workspace }}/.github/odoo
+    ODOO_DOCKER_COMPOSE_FILE: ${{ github.workspace }}/.github/odoo/docker-compose.yml
+    ODOO_TEST_DATABASE_NAME: odoo_test
+    ODOO_LOG_FILE_CONTAINER: /var/log/odoo/odoo.log
+    ODOO_LOG_FILE_HOST: ${{ github.workspace }}/.github/odoo/logs/odoo.log
+
+    CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
+    CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
+
+    DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+    DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    # specific environment variables for each repo
+    CICD_ODOO_OPTIONS: ${{ github.workspace }}/repo_source/.github/conf/odoo.json
+
 jobs:
     pylint-test:
         runs-on: ubuntu-latest
         environment: ${{github.event.head_commit.message}}
+        env:
+            REPO_PATH: ${{github.workspace}}/repo_source
+            REPOSITORY: ${{vars.PATH}}
+            ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+            BRANCH: ${{vars.BRANCH}}
         steps:
             - name: Checkout private repo
               uses: actions/checkout@v4
@@ -20,9 +44,26 @@ jobs:
               with:
                   repository: ${{ vars.PATH }}
                   token: ${{ secrets.ACCESS_TOKEN }}
-                  path: ${{ github.workspace }}/private_repo_source
+                  path: ${{ github.workspace }}/repo_source
                   ref: ${{ vars.BRANCH }}
                   fetch-depth: 1
-            - name: test
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ env.DOCKERHUB_USERNAME }}
+                  password: ${{ env.DOCKERHUB_TOKEN }}
+
+            - name: Prepare data
               run: |
-                  ls ${{github.workspace}}/private_repo_source
+                  ls $REPO_PATH
+                  bash $CICD_SCRIPTS_PATH/precheck-workflow.sh
+                  bash $CICD_SCRIPTS_PATH/prepare-pylint-test.sh
+            - uses: isbang/compose-action@v1.5.1
+              with:
+                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
+                  up-flags: "--quiet-pull"
+                  down-flags: "--volumes"
+
+            - name: Run Pylint Test cases
+              run: |
+                  bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
