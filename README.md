@@ -49,5 +49,3 @@ Execute CICD workflow for private Odoo repo
      # Generate SSH key using a different algorithm
      ssh-keygen -t ecdsa -b 521
      ```
-
--
