@@ -10,7 +10,6 @@ on:
 # prepare venv - b
 
 env:
-    # common environment variables
     ODOO_CUSTOM_ADDONS_PATH: ${{ github.workspace }}
     ODOO_CONFIG_FILE: ${{ github.workspace }}/.github/odoo/etc/odoo.conf
     ODOO_DOCKER_COMPOSE_PATH: ${{ github.workspace }}/.github/odoo
@@ -19,14 +18,11 @@ env:
     ODOO_LOG_FILE_CONTAINER: /var/log/odoo/odoo.log
     ODOO_LOG_FILE_HOST: ${{ github.workspace }}/.github/odoo/logs/odoo.log
 
+    CICD_ODOO_OPTIONS: ${{ github.workspace }}/.github/conf/odoo.json
     CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
 
-    DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-    DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    # specific environment variables for each repo
-    CICD_ODOO_OPTIONS: ${{ github.workspace }}/repo_source/.github/conf/odoo.json
+    HEY: ${{vars.BRANCH}}
 
 jobs:
     pylint-test:
@@ -60,6 +56,7 @@ jobs:
             - name: Prepare data
               run: |
                   ls $REPO_PATH
+                  echo $HEY
                   bash $CICD_SCRIPTS_PATH/precheck-workflow.sh
                   bash $CICD_SCRIPTS_PATH/prepare-pylint-test.sh
             - uses: isbang/compose-action@v1.5.1
