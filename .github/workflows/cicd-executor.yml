@@ -1,7 +1,7 @@
 name: ci/cd
 on:
     push:
-        branches: "production"
+        branches: "p_u_p"
 
 env:
     # common environment variables
@@ -112,7 +112,7 @@ jobs:
     unit-test-post-install:
         runs-on: ubuntu-latest
         environment: ${{github.event.head_commit.message}}
-        needs: [unit-test-at-install]
+        # needs: [pylint-test]
         steps:
             - name: Checkout private repo
               uses: actions/checkout@v4
@@ -144,9 +144,10 @@ jobs:
 
     integration-test:
         runs-on: ubuntu-latest
+        # fixme: trigger by special commit
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         environment: ${{github.event.head_commit.message}}
-        needs: [unit-test-post-install]
+        needs: [unit-test-post-install, unit-test-at-install]
         env:
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
             SERVER_LATEST_BACKUP_FILE_PATH: /tmp/odoo/backup/${{github.repository_id}}/.odoo.tar.gz
