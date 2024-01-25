@@ -3,18 +3,6 @@ on:
     push:
         branches: [production]
 
-env:
-    ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-    DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-    DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    # specific environment variables for each repo
-    # get those values from designated 'environment' in jobs
-    TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-    TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-    SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
-    SERVER_DB_PASSWORD: ${{ secrets.SERVER_DB_PASSWORD }}
-
 jobs:
     call_common_cicd:
         uses: ./.github/workflows/common-cicd.yml
