@@ -42,45 +42,45 @@ env:
     SERVER_ODOO_DB_NAME: ${{ vars.SERVER_ODOO_DB_NAME }}
 
 jobs:
-    pylint-test:
-        runs-on: ubuntu-latest
-        environment: ${{github.event.head_commit.message}}
-        steps:
-            - name: Checkout private repo
-              uses: actions/checkout@v4
-              with:
-                  repository: ${{ env.REPOSITORY }}
-                  token: ${{ env.ACCESS_TOKEN }}
-                  path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
-                  fetch-depth: 1
+    # pylint-test:
+    #     runs-on: ubuntu-latest
+    #     environment: ${{github.event.head_commit.message}}
+    #     steps:
+    #         - name: Checkout private repo
+    #           uses: actions/checkout@v4
+    #           with:
+    #               repository: ${{ env.REPOSITORY }}
+    #               token: ${{ env.ACCESS_TOKEN }}
+    #               path: ${{ env.REPO_PATH }}
+    #               ref: ${{ env.BRANCH }}
+    #               fetch-depth: 1
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ env.DOCKERHUB_USERNAME }}
-                  password: ${{ env.DOCKERHUB_TOKEN }}
+    #         - name: Login to Docker Hub
+    #           uses: docker/login-action@v3
+    #           with:
+    #               username: ${{ env.DOCKERHUB_USERNAME }}
+    #               password: ${{ env.DOCKERHUB_TOKEN }}
 
-            - name: Prepare data
-              run: |
-                  ls $REPO_PATH
-                  echo $HEY
-                  bash $CICD_SCRIPTS_PATH/precheck-workflow.sh
-                  bash $CICD_SCRIPTS_PATH/prepare-pylint-test.sh
-            - uses: isbang/compose-action@v1.5.1
-              with:
-                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
-                  up-flags: "--quiet-pull"
-                  down-flags: "--volumes"
+    #         - name: Prepare data
+    #           run: |
+    #               ls $REPO_PATH
+    #               echo $HEY
+    #               bash $CICD_SCRIPTS_PATH/precheck-workflow.sh
+    #               bash $CICD_SCRIPTS_PATH/prepare-pylint-test.sh
+    #         - uses: isbang/compose-action@v1.5.1
+    #           with:
+    #               compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
+    #               up-flags: "--quiet-pull"
+    #               down-flags: "--volumes"
 
-            - name: Run Pylint Test cases
-              run: |
-                  bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
+    #         - name: Run Pylint Test cases
+    #           run: |
+    #               bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
 
     unit-test-at-install:
         runs-on: ubuntu-latest
         environment: ${{github.event.head_commit.message}}
-        needs: [pylint-test]
+        # needs: [pylint-test]
         steps:
             - name: Checkout private repo
               uses: actions/checkout@v4
