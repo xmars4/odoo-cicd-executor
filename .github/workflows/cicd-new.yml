@@ -10,6 +10,7 @@ on:
 # prepare venv - b
 
 env:
+    REPO_PATH: ${{ github.workspace }}
     ODOO_CUSTOM_ADDONS_PATH: ${{ github.workspace }}
     ODOO_CONFIG_FILE: ${{ github.workspace }}/.github/odoo/etc/odoo.conf
     ODOO_DOCKER_COMPOSE_PATH: ${{ github.workspace }}/.github/odoo
@@ -32,14 +33,10 @@ jobs:
         runs-on: ubuntu-latest
         environment: ${{github.event.head_commit.message}}
         env:
-            REPO_PATH: ${{github.workspace}}/repo_source
             REPOSITORY: ${{vars.PATH}}
             ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
             BRANCH: ${{vars.BRANCH}}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
             - name: Checkout private repo
               uses: actions/checkout@v4
               # fixme: move ACCESS_TOKEN to global config (instead of environment)
