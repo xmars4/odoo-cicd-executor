@@ -1,7 +1,7 @@
 name: Execute CICD for private Odoo repo
 on:
     push:
-        branches: [production]
+        branches: [vdx-vn/cuu-long]
 
 jobs:
     call_common_cicd:
