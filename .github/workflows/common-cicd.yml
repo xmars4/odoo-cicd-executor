@@ -216,7 +216,7 @@ jobs:
                   port: ${{ env.SERVER_PORT }}
                   command_timeout: 30m
                   script: |
-                      bash ${{ env.SERVER_CICD_SCRIPTS_PATH }}/server-backup.sh "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{env.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
+                      bash ${{ env.SERVER_CICD_SCRIPTS_PATH }}/github/workspace/.github/scripts/server-backup.sh "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{env.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
 
             - name: "Download backup file"
               uses: nicklasfrahm/scp-action@main
