@@ -53,6 +53,8 @@ env:
     SERVER_DEPLOY_PATH: ${{ vars.SERVER_DEPLOY_PATH }}
     SERVER_ODOO_URL: ${{ vars.SERVER_ODOO_URL }}
     SERVER_ODOO_DB_NAME: ${{ vars.SERVER_ODOO_DB_NAME }}
+    TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+    TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
 
 jobs:
     # pylint-test:
