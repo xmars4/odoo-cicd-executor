@@ -38,6 +38,7 @@ env:
     CICD_ODOO_OPTIONS: ${{ github.workspace }}/.github/conf/odoo.json
     CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
+    SERVER_CICD_SCRIPTS_PATH: /tmp/odoo/cicd/${{ github.repository_id }}
 
     # specific environment variables for each repo
     # get those values from designated 'environment' in jobs
@@ -159,10 +160,9 @@ jobs:
 
     integration-test:
         runs-on: ubuntu-latest
-        # fixme: trigger by special commit
         if: inputs.action == 'deploy'
         environment: ${{inputs.repo_name}}
-        # needs: [unit-test-post-install, unit-test-at-install]
+        needs: [unit-test-post-install, unit-test-at-install]
         env:
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
             SERVER_LATEST_BACKUP_FILE_PATH: /tmp/odoo/backup/${{github.repository_id}}/.odoo.tar.gz
@@ -195,7 +195,7 @@ jobs:
                   password: ${{ secrets.PASSWORD }}
                   port: ${{ secrets.PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
-                  target: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
+                  target: ${{ env.SERVER_CICD_SCRIPTS_PATH }}
 
             # - name: "Upload backup script file to server"
             #   uses: garygrossgarten/github-action-scp@release
@@ -211,11 +211,11 @@ jobs:
               with:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  key: ${{ env.SERVER_PRIVATE_KEY }}
+                  key: ${{ secrets.SERVER_PRIVATE_KEY }}
                   port: ${{ env.SERVER_PORT }}
                   command_timeout: 30m
                   script: |
-                      bash ${{ env.SERVER_BACKUP_SCRIPT_PATH }} "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{env.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
+                      bash ${{ env.SERVER_CICD_SCRIPTS_PATH }}/server-backup.sh "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{env.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
 
             - name: "Download backup file"
               uses: nicklasfrahm/scp-action@main
@@ -223,7 +223,7 @@ jobs:
                   direction: download
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  key: ${{ env.SERVER_PRIVATE_KEY }}
+                  key: ${{ secrets.SERVER_PRIVATE_KEY }}
                   insecure_ignore_fingerprint: true
                   action_timeout: 30m
                   source: ${{env.SERVER_LATEST_BACKUP_FILE_PATH}}
@@ -265,7 +265,7 @@ jobs:
                   remote: ${{ env.SERVER_DEPLOY_SCRIPT_PATH }}
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  privateKey: ${{ env.SERVER_PRIVATE_KEY }}
+                  privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
 
             - name: "Deploy to server"
               uses: appleboy/ssh-action@v1.0.0
@@ -277,7 +277,7 @@ jobs:
               with:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  key: ${{ env.SERVER_PRIVATE_KEY }}
+                  key: ${{ secrets.SERVER_PRIVATE_KEY }}
                   port: ${{ env.SERVER_PORT }}
                   script: |
                       bash ${{env.SERVER_DEPLOY_SCRIPT_PATH}} "${{env.SERVER_DOCKER_COMPOSE_PATH}}" "${{env.SERVER_CUSTOM_ADDONS_PATH}}" "${{env.SERVER_CONFIG_FILE}}" "dump_private_key" "${{ env.SERVER_ODOO_URL }}" "${{ env.SERVER_ODOO_DB_NAME }}"
