@@ -186,6 +186,17 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+            - name: copy file via ssh password
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ env.SERVER_HOST }}
+                  username: ${{ env.SERVER_USER }}
+                  key: ${{ env.SERVER_PRIVATE_KEY }}
+                  password: ${{ secrets.PASSWORD }}
+                  port: ${{ secrets.PORT }}
+                  source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
+                  target: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
+
             - name: "Upload backup script file to server"
               uses: garygrossgarten/github-action-scp@release
               with:
