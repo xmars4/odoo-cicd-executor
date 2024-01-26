@@ -57,7 +57,7 @@ jobs:
     # pylint-test:
     #     runs-on: ubuntu-latest
     #     environment: ${{inputs.repo_name}}
-    #     if: inputs.action == 'test'
+    #     if: inputs.action == 'test' || inputs.action == 'deploy'
     #     steps:
     #         - name: Checkout private repo
     #           uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
     unit-test-at-install:
         runs-on: ubuntu-latest
         environment: ${{inputs.repo_name}}
-        if: inputs.action == 'test'
+        if: inputs.action == 'test' || inputs.action == 'deploy'
         # needs: [pylint-test]
         steps:
             - name: Checkout private repo
@@ -126,7 +126,7 @@ jobs:
     unit-test-post-install:
         runs-on: ubuntu-latest
         environment: ${{inputs.repo_name}}
-        if: inputs.action == 'test'
+        if: inputs.action == 'test' || inputs.action == 'deploy'
         # needs: [pylint-test]
         steps:
             - name: Checkout private repo
