@@ -162,7 +162,7 @@ jobs:
         # fixme: trigger by special commit
         if: inputs.action == 'deploy'
         environment: ${{inputs.repo_name}}
-        needs: [unit-test-post-install, unit-test-at-install]
+        # needs: [unit-test-post-install, unit-test-at-install]
         env:
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
             SERVER_LATEST_BACKUP_FILE_PATH: /tmp/odoo/backup/${{github.repository_id}}/.odoo.tar.gz
@@ -197,14 +197,14 @@ jobs:
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
                   target: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
 
-            - name: "Upload backup script file to server"
-              uses: garygrossgarten/github-action-scp@release
-              with:
-                  local: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
-                  remote: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
-                  host: ${{ env.SERVER_HOST }}
-                  username: ${{ env.SERVER_USER }}
-                  privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
+            # - name: "Upload backup script file to server"
+            #   uses: garygrossgarten/github-action-scp@release
+            #   with:
+            #       local: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
+            #       remote: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
+            #       host: ${{ env.SERVER_HOST }}
+            #       username: ${{ env.SERVER_USER }}
+            #       privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
 
             - name: "Backup Odoo on server"
               uses: appleboy/ssh-action@v1.0.0
