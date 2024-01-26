@@ -191,7 +191,7 @@ jobs:
               with:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  key: ${{ env.SERVER_PRIVATE_KEY }}
+                  key: ${{ secrets.SERVER_PRIVATE_KEY }}
                   password: ${{ secrets.PASSWORD }}
                   port: ${{ secrets.PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
@@ -204,7 +204,7 @@ jobs:
                   remote: ${{ env.SERVER_BACKUP_SCRIPT_PATH }}
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
-                  privateKey: ${{ env.SERVER_PRIVATE_KEY }}
+                  privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
 
             - name: "Backup Odoo on server"
               uses: appleboy/ssh-action@v1.0.0
