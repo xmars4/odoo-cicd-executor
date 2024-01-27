@@ -14,8 +14,26 @@ e.g: vdx-vn/cuu-long
 1. Replace <private_repo_path> value in file [private-cicd.yml](.github/workflows/private-cicd.yml) by *(1)*
 
 1. Go to [repo setting](https://github.com/xmars4/odoo-cicd-executor/settings/secrets/actions), create new environment named *(1)*
-with following secrets and variables:
+with following secrets and variables:\
 
+Environment secrets:
+- **ACCESS_TOKEN**: PAT for access to private repo
+- **SERVER_DB_PASSWORD**: Server database password, for backup process
+- **SERVER_PRIVATE_KEY**: Server private key file, for access to server through ssh or scp protocol
+- **TELEGRAM_CHANNEL_ID**: Telegram channel ID, use for notification through Telegram channel
+- **TELEGRAM_TOKEN**: Telegram BOT token, the BOT added to  this TELEGRAM_CHANNEL_ID
+
+Environment variables:
+- **BRANCH**: Branch name of private repo that need need cicd process
+- **DB_IMAGE_TAG**: Postgres image tag name, defined in docker-compose.yml file of private repo
+- **ODOO_IMAGE_TAG**: Odoo image tag name, defined in docker-compose.yml file of private repo
+- **PATH**: Private repo GitHub path
+- **SERVER_DEPLOY_PATH**: Server deployment path, the folder contains docker-compose.yml file
+- **SERVER_HOST**: Server IP address
+- **SERVER_ODOO_DB_NAME**: Odoo database name
+- **SERVER_ODOO_URL**: Odoo url
+- **SERVER_PORT**: Server SSH port
+- **SERVER_USER**: Username for SSH connection
 ## Problems & Solutions
 
 1. **Non-expired PAT (personal access token) when checking out other repo**
@@ -34,5 +52,3 @@ with following secrets and variables:
      # Generate SSH key using a different algorithm
      ssh-keygen -t ecdsa -b 521
      ```
-
-.
