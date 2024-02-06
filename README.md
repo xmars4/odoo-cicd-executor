@@ -7,7 +7,7 @@
 For a newly Odoo repository that needs a CICD process, follow the instructions below:
 
 1. Determine repo name *(1)*, e.g., vdx-vn/cuu-long.
-1. Create a new branch name *(1)* from the production branch.
+1. Checkout a new branch name *(1)* from the production branch.
 1. Replace `<private_repo_path>` value in the file [private-cicd.yml](.github/workflows/private-cicd.yml) with *(1)*.
 1. Go to [repo settings](https://github.com/xmars4/odoo-cicd-executor/settings/secrets/actions) and create a new environment named *(1)* with the following secrets and variables:
 
