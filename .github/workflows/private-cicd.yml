@@ -1,12 +1,12 @@
 name: Execute CICD for private Odoo repo
 on:
     push:
-        branches: [<private_repo_path>]
+        branches: [xmars4/odoo-cicd-github-action]
 
 jobs:
     call_common_cicd:
         uses: ./.github/workflows/common-cicd.yml
         with:
-            repo_name: <private_repo_path>
+            repo_name: xmars4/odoo-cicd-github-action
             action: ${{ github.event.head_commit.message }}
         secrets: inherit
