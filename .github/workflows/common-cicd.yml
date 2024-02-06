@@ -25,7 +25,7 @@ env:
     SERVER_CICD_SCRIPT_FOLDER: /tmp/odoo/cicd/${{ github.repository_id }}
 
     # ==== Repository secrets ====
-    SSH_KEY: ${{secrets.SSH_KEY}}
+    SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}
     DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
     DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
 
@@ -57,7 +57,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY }}
+                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
                   ref: ${{ env.BRANCH }}
                   fetch-depth: 1
@@ -91,7 +91,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY }}
+                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
                   ref: ${{ env.BRANCH }}
                   fetch-depth: 1
@@ -123,7 +123,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY }}
+                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
                   ref: ${{ env.BRANCH }}
                   fetch-depth: 1
@@ -163,7 +163,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY }}
+                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
                   ref: ${{ env.BRANCH }}
                   fetch-depth: 1
@@ -233,7 +233,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY }}
+                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
                   ref: ${{ env.BRANCH }}
                   fetch-depth: 1
