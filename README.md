@@ -27,7 +27,7 @@ For a newly Odoo repository that needs a CICD process, follow the instructions b
      - **SERVER_HOST**: Server IP address
      - **SERVER_ODOO_DB_NAME**: Odoo database name
      - **SERVER_ODOO_URL**: Odoo URL
-     - **SERVER_PORT**: Server SSH port
+     - **SERVER_SSH_PORT**: Server SSH port
      - **SERVER_USER**: Username for SSH connection
 
 1. Use [this template repository](https://github.com/xmars4/odoo-cicd-github-action) to create a new repo named *(1)*.
