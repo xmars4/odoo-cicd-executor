@@ -2,6 +2,10 @@ name: Execute CICD for private Odoo repo
 on:
     workflow_dispatch:
         inputs:
+            repo:
+                description: "Private repo name"
+                required: true
+                type: string
             action:
                 description: "Related action"
                 required: true
@@ -10,10 +14,6 @@ on:
                 options:
                     - test
                     - deploy
-            repo:
-                description: "Private repo name"
-                required: true
-                type: string
             source_branch:
                 description: "Source branch"
                 required: true

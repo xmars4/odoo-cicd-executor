@@ -30,6 +30,10 @@ env:
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
     SERVER_CICD_SCRIPT_FOLDER: /tmp/odoo/cicd/${{ github.repository_id }}
 
+    # ==== Workflow inputs ====
+    SOURCE_BRANCH: ${{ inputs.source_branch }}
+    TARGET_BRANCH: ${{ inputs.target_branch }}
+    REPOSITORY: ${{ inputs.repo_name }}
     # ==== Repository secrets ====
     SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}
     DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
@@ -42,8 +46,6 @@ env:
     SERVER_DB_PASSWORD: ${{secrets.SERVER_DB_PASSWORD}}
 
     # ===== Environment variables =====
-    REPOSITORY: ${{ vars.PATH }}
-    BRANCH: ${{ vars.BRANCH }}
     ODOO_IMAGE_TAG: ${{ vars.ODOO_IMAGE_TAG }}
     DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
     SERVER_HOST: ${{ vars.SERVER_HOST }}
@@ -59,19 +61,13 @@ jobs:
         environment: ${{inputs.repo_name}}
         if: inputs.action == 'test' || inputs.action == 'deploy'
         steps:
-            - name: check variables
-              run: echo ${{inputs.source_branch}}
-                  echo ${{inputs.target_branch}}
-                  echo ${{inputs.repo_name}}
-                  echo ${{inputs.action}}
-
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
+                  ref: ${{ env.SOURCE_BRANCH }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -105,7 +101,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
+                  ref: ${{ env.SOURCE_BRANCH }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -137,7 +133,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
+                  ref: ${{ env.SOURCE_BRANCH }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -177,7 +173,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
+                  ref: ${{ env.SOURCE_BRANCH }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -247,7 +243,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.BRANCH }}
+                  ref: ${{ env.SOURCE_BRANCH }}
                   fetch-depth: 1
 
             - name: "Upload deploy script file to server"
