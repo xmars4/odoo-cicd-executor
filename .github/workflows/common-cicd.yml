@@ -8,6 +8,12 @@ on:
             action:
                 required: true
                 type: string
+            source_branch:
+                required: true
+                type: string
+            target_branch:
+                required: true
+                type: string
 
 env:
     # Common variables
@@ -53,6 +59,12 @@ jobs:
         environment: ${{inputs.repo_name}}
         if: inputs.action == 'test' || inputs.action == 'deploy'
         steps:
+            - name: check variables
+              run: echo ${{inputs.source_branch}}
+                  echo ${{inputs.target_branch}}
+                  echo ${{inputs.repo_name}}
+                  echo ${{inputs.action}}
+
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
