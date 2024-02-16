@@ -56,6 +56,8 @@ env:
     SERVER_ODOO_URL: ${{ vars.SERVER_ODOO_URL }}
     SERVER_ODOO_DB_NAME: ${{ vars.SERVER_ODOO_DB_NAME }}
 
+    # fixme: setup commit status for action in private repo here
+
 jobs:
     pylint-test:
         runs-on: ubuntu-latest
