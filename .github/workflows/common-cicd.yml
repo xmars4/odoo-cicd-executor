@@ -34,6 +34,7 @@ env:
     SOURCE_BRANCH: ${{ inputs.source_branch }}
     TARGET_BRANCH: ${{ inputs.target_branch }}
     REPOSITORY: ${{ inputs.repo_name }}
+
     # ==== Repository secrets ====
     SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}
     DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
