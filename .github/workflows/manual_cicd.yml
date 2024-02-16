@@ -1,0 +1,32 @@
+name: Execute CICD for private Odoo repo
+on:
+    workflow_dispatch:
+        inputs:
+            action:
+                description: "Related action"
+                required: true
+                default: "test"
+                type: choice
+                options:
+                    - test
+                    - deploy
+            repo:
+                description: "Private repo name"
+                required: true
+                type: string
+            source_branch:
+                description: "Source branch"
+                required: true
+                type: string
+            target_branch:
+                description: "Target branch"
+                required: true
+                type: string
+
+jobs:
+    call_common_cicd:
+        uses: ./.github/workflows/common-cicd.yml
+        with:
+            repo_name: ${{ inputs.repo }}
+            action: ${{ inputs.action }}
+        secrets: inherit
