@@ -12,7 +12,6 @@ For a newly Odoo repository that needs a CICD process, follow the instructions b
 1. Go to [repo settings](https://github.com/xmars4/odoo-cicd-executor/settings/secrets/actions) and create a new environment named *(1)* with the following secrets and variables:
 
    - *Environment secrets:*
-     - **ACCESS_TOKEN**: PAT for access to the private repo
      - **SERVER_DB_PASSWORD**: Server database password for the backup process
      - **SERVER_PRIVATE_KEY**: Server private key file for access to the server through SSH or SCP protocol
      - **TELEGRAM_CHANNEL_ID**: Telegram channel ID for notifications through the Telegram channel
