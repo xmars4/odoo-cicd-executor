@@ -68,20 +68,31 @@ jobs:
         if: always()
         steps:
             - name: Set commit status as pending
+              if: inputs.action == 'test'
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: CI/CD Unit Test
+                  context:
+                      ${{ inputs.action }}
+                      # steps.check.outputs.status
+    pylint-test:
+        runs-on: ubuntu-latest
+        env:
+            commit_context: CI/CD - Pylint Test
+        environment: ${{inputs.repo_name}}
+        if: inputs.action == 'test' || inputs.action == 'deploy'
+        steps:
+            - name: Set commit status as pending
               uses: myrotvorets/set-commit-status-action@master
               with:
                   repo: ${{ inputs.repo_name }}
                   sha: ${{ inputs.commit_sha }}
                   token: ${{ secrets.PAT_GITHUB }}
                   status: pending
-                  context:
-                      ${{ inputs.action }}
-                      # steps.check.outputs.status
-    pylint-test:
-        runs-on: ubuntu-latest
-        environment: ${{inputs.repo_name}}
-        if: inputs.action == 'test' || inputs.action == 'deploy'
-        steps:
+                  context: ${{ env.commit_context }}
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -108,8 +119,18 @@ jobs:
                   down-flags: "--volumes"
 
             - name: Run Pylint Test cases
+              id: run_pylin_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
+
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: ${{ steps.run_pylin_test.conclusion == 'success' && 'success' || 'failed' }}
+                  context: ${{ env.commit_context }}
 
     unit-test-at-install:
         runs-on: ubuntu-latest
