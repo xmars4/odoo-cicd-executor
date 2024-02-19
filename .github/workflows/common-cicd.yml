@@ -60,24 +60,7 @@ env:
     SERVER_ODOO_URL: ${{ vars.SERVER_ODOO_URL }}
     SERVER_ODOO_DB_NAME: ${{ vars.SERVER_ODOO_DB_NAME }}
 
-    # fixme: setup commit status for action in private repo here
-
 jobs:
-    notification:
-        runs-on: ubuntu-latest
-        if: always()
-        steps:
-            - name: Set commit status as pending
-              if: inputs.action == 'test'
-              uses: myrotvorets/set-commit-status-action@master
-              with:
-                  repo: ${{ inputs.repo_name }}
-                  sha: ${{ inputs.commit_sha }}
-                  token: ${{ secrets.PAT_GITHUB }}
-                  status: CI/CD Unit Test
-                  context:
-                      ${{ inputs.action }}
-                      # steps.check.outputs.status
     pylint-test:
         runs-on: ubuntu-latest
         env:
@@ -122,6 +105,7 @@ jobs:
               id: run_pylin_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
+                  exit 1
 
             - name: Set commit status as pending
               uses: myrotvorets/set-commit-status-action@master
