@@ -14,6 +14,9 @@ on:
             target_branch:
                 required: true
                 type: string
+            commit_sha:
+                required: false
+                type: string
 
 env:
     # Common variables
@@ -37,6 +40,7 @@ env:
 
     # ==== Repository secrets ====
     SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}
+    PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
     DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
     DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
 
@@ -59,6 +63,19 @@ env:
     # fixme: setup commit status for action in private repo here
 
 jobs:
+    notification:
+        runs-on: ubuntu-latest
+        if: always()
+        steps:
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: pending
+                  context:
+                      ${{ inputs.action }}
+                      # steps.check.outputs.status
     pylint-test:
         runs-on: ubuntu-latest
         environment: ${{inputs.repo_name}}

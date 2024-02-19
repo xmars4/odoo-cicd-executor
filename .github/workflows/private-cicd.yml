@@ -22,6 +22,10 @@ on:
                 description: "Target branch"
                 required: true
                 type: string
+            commit_sha:
+                description: "Commit SHA"
+                required: false
+                type: string
 
 jobs:
     call_common_cicd:
@@ -31,4 +35,5 @@ jobs:
             action: ${{ inputs.action }}
             source_branch: ${{ inputs.source_branch }}
             target_branch: ${{ inputs.target_branch }}
+            commit_sha: ${{ inputs.commit_sha }}
         secrets: inherit
