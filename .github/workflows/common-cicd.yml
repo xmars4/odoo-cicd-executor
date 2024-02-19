@@ -174,7 +174,7 @@ jobs:
     unit-test-post-install:
         runs-on: ubuntu-latest
         env:
-            commit_context: CI/CD - Unit Test At Install
+            commit_context: CI/CD - Unit Test Post Install
         environment: ${{inputs.repo_name}}
         if: inputs.action == 'test' || inputs.action == 'deploy'
         steps:
