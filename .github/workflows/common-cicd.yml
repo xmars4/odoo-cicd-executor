@@ -70,6 +70,7 @@ jobs:
             - name: Set commit status as pending
               uses: myrotvorets/set-commit-status-action@master
               with:
+                  repo: ${{ inputs.repo_name }}
                   sha: ${{ inputs.commit_sha }}
                   token: ${{ secrets.PAT_GITHUB }}
                   status: pending
