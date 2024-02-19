@@ -103,10 +103,9 @@ jobs:
                   down-flags: "--volumes"
 
             - name: Run Pylint Test cases
-              id: run_pylin_test
+              id: run_pylint_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
-                  exit 1
 
             - name: Set final commit status
               if: ${{always()}}
@@ -115,14 +114,24 @@ jobs:
                   repo: ${{ inputs.repo_name }}
                   sha: ${{ inputs.commit_sha }}
                   token: ${{ secrets.PAT_GITHUB }}
-                  status: ${{ steps.run_pylin_test.conclusion == 'success' && 'success' || 'failure' }}
+                  status: ${{ steps.run_pylint_test.conclusion == 'success' && 'success' || 'failure' }}
                   context: ${{ env.commit_context }}
 
     unit-test-at-install:
         runs-on: ubuntu-latest
+        env:
+            commit_context: CI/CD - Unit Test At Install
         environment: ${{inputs.repo_name}}
         if: inputs.action == 'test' || inputs.action == 'deploy'
         steps:
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: pending
+                  context: ${{ env.commit_context }}
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -146,15 +155,37 @@ jobs:
                   compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
                   up-flags: "--quiet-pull"
                   down-flags: "--volumes"
+
             - name: Run Unit test cases
+              id: run_post_install_unit_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-unit-test.sh "At Install"
 
+            - name: Set final commit status
+              if: ${{always()}}
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: ${{ steps.run_post_install_unit_test.conclusion == 'success' && 'success' || 'failure' }}
+                  context: ${{ env.commit_context }}
+
     unit-test-post-install:
         runs-on: ubuntu-latest
+        env:
+            commit_context: CI/CD - Unit Test At Install
         environment: ${{inputs.repo_name}}
         if: inputs.action == 'test' || inputs.action == 'deploy'
         steps:
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: pending
+                  context: ${{ env.commit_context }}
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -180,8 +211,19 @@ jobs:
                   down-flags: "--volumes"
 
             - name: Run Unit test cases
+              id: run_post_install_unit_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-unit-test.sh "Post Install"
+
+            - name: Set final commit status
+              if: ${{always()}}
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: ${{ steps.run_post_install_unit_test.conclusion == 'success' && 'success' || 'failure' }}
+                  context: ${{ env.commit_context }}
 
     integration-test:
         runs-on: ubuntu-latest
@@ -193,8 +235,18 @@ jobs:
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
             SERVER_LATEST_BACKUP_FILE_PATH: /tmp/odoo/backup/${{github.repository_id}}/.odoo.tar.gz
             GITHUB_RUN_ATTEMPT: ${{github.run_attempt}}
+            commit_context: CI/CD - Integration Test
 
         steps:
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: pending
+                  context: ${{ env.commit_context }}
+
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -255,8 +307,19 @@ jobs:
                   down-flags: "--volumes"
 
             - name: "Integration test"
+              id: run_integration_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-integration-test.sh ${{env.LOCAL_BACKUP_FILE_PATH}}
+
+            - name: Set final commit status
+              if: ${{always()}}
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: ${{ steps.run_integration_test.conclusion == 'success' && 'success' || 'failure' }}
+                  context: ${{ env.commit_context }}
 
     deploy-server:
         runs-on: ubuntu-latest
@@ -264,7 +327,17 @@ jobs:
         needs: [integration-test]
         env:
             SERVER_DEPLOY_SCRIPT_PATH: /tmp/odoo/cicd/${{ github.repository_id }}/deploy.sh
+            commit_context: CI/CD - Deploy to Server
         steps:
+            - name: Set commit status as pending
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: pending
+                  context: ${{ env.commit_context }}
+
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -287,6 +360,7 @@ jobs:
                   strip_components: 4
 
             - name: "Deploy to server"
+              id: deploy_to_server
               uses: appleboy/ssh-action@v1.0.0
               env:
                   SERVER_CUSTOM_ADDONS_PATH: ${{env.SERVER_DEPLOY_PATH}}/..
@@ -300,11 +374,23 @@ jobs:
                   port: ${{ env.SERVER_SSH_PORT }}
                   script: |
                       bash ${{ env.SERVER_CICD_SCRIPT_FOLDER }}/server-deploy.sh "${{env.SERVER_DOCKER_COMPOSE_PATH}}" "${{env.SERVER_CUSTOM_ADDONS_PATH}}" "${{env.SERVER_CONFIG_FILE}}" "dump_private_key" "${{ env.SERVER_ODOO_URL }}" "${{ env.SERVER_ODOO_DB_NAME }}"
+
             - name: The Deploy step has failed
               if: ${{ failure() }}
               run: |
                   bash ${{env.CICD_SCRIPTS_PATH}}/post-server-deploy.sh "failed"
+
             - name: The Deploy step has successful
               if: ${{ success() }}
               run: |
                   bash ${{env.CICD_SCRIPTS_PATH}}/post-server-deploy.sh "success"
+
+            - name: Set final commit status
+              if: ${{always()}}
+              uses: myrotvorets/set-commit-status-action@master
+              with:
+                  repo: ${{ inputs.repo_name }}
+                  sha: ${{ inputs.commit_sha }}
+                  token: ${{ secrets.PAT_GITHUB }}
+                  status: ${{ steps.deploy_to_server.conclusion == 'success' && 'success' || 'failure' }}
+                  context: ${{ env.commit_context }}
