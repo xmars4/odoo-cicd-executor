@@ -107,7 +107,8 @@ jobs:
                   bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
                   exit 1
 
-            - name: Set commit status as pending
+            - name: Set final commit status
+              if: ${{always()}}
               uses: myrotvorets/set-commit-status-action@master
               with:
                   repo: ${{ inputs.repo_name }}
