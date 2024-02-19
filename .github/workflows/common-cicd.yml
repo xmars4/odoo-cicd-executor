@@ -114,7 +114,7 @@ jobs:
                   repo: ${{ inputs.repo_name }}
                   sha: ${{ inputs.commit_sha }}
                   token: ${{ secrets.PAT_GITHUB }}
-                  status: ${{ steps.run_pylin_test.conclusion == 'success' && 'success' || 'failed' }}
+                  status: ${{ steps.run_pylin_test.conclusion == 'success' && 'success' || 'failure' }}
                   context: ${{ env.commit_context }}
 
     unit-test-at-install:
