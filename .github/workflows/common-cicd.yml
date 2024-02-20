@@ -62,6 +62,7 @@ env:
 
 jobs:
     pylint-test:
+        name: ${{inputs.repo_name}} - Pylint Test
         runs-on: ubuntu-latest
         env:
             commit_context: CI/CD - Pylint Test
