@@ -229,7 +229,7 @@ jobs:
         runs-on: ubuntu-latest
         if: inputs.action == 'deploy'
         environment: ${{inputs.repo_name}}
-        needs: [unit-test-post-install, unit-test-at-install]
+        needs: [pylint-test, unit-test-at-install, unit-test-post-install]
         env:
             LOCAL_BACKUP_FILE_PATH: ${{github.workspace}}/odoo.tar.gz
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
