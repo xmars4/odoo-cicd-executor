@@ -17,7 +17,8 @@ on:
             commit_sha:
                 required: false
                 type: string
-
+# TODO: try to start two containers (odoo + postgres) independent instead of using docker compose action
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
 env:
     # Common variables
     REPO_PATH: ${{ github.workspace }}
