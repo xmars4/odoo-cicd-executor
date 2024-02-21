@@ -119,6 +119,7 @@ jobs:
                   context: ${{ env.commit_context }}
 
     unit-test-at-install:
+        name: ${{inputs.repo_name}} - Unit test at install
         runs-on: ubuntu-latest
         env:
             commit_context: CI/CD - Unit Test At Install
@@ -173,6 +174,7 @@ jobs:
                   context: ${{ env.commit_context }}
 
     unit-test-post-install:
+        name: ${{inputs.repo_name}} - Unit test post install
         runs-on: ubuntu-latest
         env:
             commit_context: CI/CD - Unit Test Post Install
@@ -227,6 +229,7 @@ jobs:
                   context: ${{ env.commit_context }}
 
     integration-test:
+        name: ${{inputs.repo_name}} - Integration test
         runs-on: ubuntu-latest
         if: inputs.action == 'deploy'
         environment: ${{inputs.repo_name}}
@@ -323,6 +326,7 @@ jobs:
                   context: ${{ env.commit_context }}
 
     deploy-server:
+        name: ${{inputs.repo_name}} - Deploy server
         runs-on: ubuntu-latest
         environment: ${{inputs.repo_name}}
         needs: [integration-test]
