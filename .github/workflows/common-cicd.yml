@@ -17,8 +17,7 @@ on:
             commit_sha:
                 required: false
                 type: string
-# TODO: try to start two containers (odoo + postgres) independent instead of using docker compose action
-# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+
 env:
     # Common variables
     REPO_PATH: ${{ github.workspace }}
@@ -94,17 +93,7 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Prepare data
-              run: |
-                  bash $CICD_SCRIPTS_PATH/precheck-workflow.sh
-                  bash $CICD_SCRIPTS_PATH/prepare-pylint-test.sh
-            - uses: isbang/compose-action@v1.5.1
-              with:
-                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
-                  up-flags: "--quiet-pull"
-                  down-flags: "--volumes"
-
-            - name: Run Pylint Test cases
+            - name: Run Pylint test cases
               id: run_pylint_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-pylint-test.sh
@@ -150,19 +139,10 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Prepare data
-              run: |
-                  bash $CICD_SCRIPTS_PATH/prepare-unit-test.sh "at_install"
-            - uses: isbang/compose-action@v1.5.1
-              with:
-                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
-                  up-flags: "--quiet-pull"
-                  down-flags: "--volumes"
-
             - name: Run Unit test cases
               id: run_post_install_unit_test
               run: |
-                  bash $CICD_SCRIPTS_PATH/run-unit-test.sh "At Install"
+                  bash $CICD_SCRIPTS_PATH/run-unit-test.sh "at_install"
 
             - name: Set final commit status
               if: ${{always()}}
@@ -205,19 +185,10 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Prepare data
-              run: |
-                  bash $CICD_SCRIPTS_PATH/prepare-unit-test.sh "post_install"
-            - uses: isbang/compose-action@v1.5.1
-              with:
-                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
-                  up-flags: "--quiet-pull"
-                  down-flags: "--volumes"
-
             - name: Run Unit test cases
               id: run_post_install_unit_test
               run: |
-                  bash $CICD_SCRIPTS_PATH/run-unit-test.sh "Post Install"
+                  bash $CICD_SCRIPTS_PATH/run-unit-test.sh "post_install"
 
             - name: Set final commit status
               if: ${{always()}}
@@ -302,16 +273,7 @@ jobs:
                   source: ${{env.SERVER_LATEST_BACKUP_FILE_PATH}}
                   target: ${{env.LOCAL_BACKUP_FILE_PATH}}
 
-            - name: "Prepare data"
-              run: |
-                  bash $CICD_SCRIPTS_PATH/prepare-integration-test.sh
-            - uses: isbang/compose-action@v1.5.1
-              with:
-                  compose-file: ${{ env.ODOO_DOCKER_COMPOSE_FILE }}
-                  up-flags: "--quiet-pull"
-                  down-flags: "--volumes"
-
-            - name: "Integration test"
+            - name: "Run Integration test"
               id: run_integration_test
               run: |
                   bash $CICD_SCRIPTS_PATH/run-integration-test.sh ${{env.LOCAL_BACKUP_FILE_PATH}}
