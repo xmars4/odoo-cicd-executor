@@ -89,7 +89,7 @@ jobs:
     #               repository: ${{ env.REPOSITORY }}
     #               ssh-key: ${{ env.SSH_KEY_GITHUB }}
     #               path: ${{ env.REPO_PATH }}
-    #               ref: ${{ inputs.action == 'test' && env.SOURCE_BRANCH || env.TARGET_BRANCH }}
+    #               ref: ${{ inputs.commit_sha }}
     #               fetch-depth: 1
 
     #         - name: Login to Docker Hub
@@ -135,7 +135,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ inputs.action == 'test' && env.SOURCE_BRANCH || env.TARGET_BRANCH }}
+                  ref: ${{ inputs.commit_sha }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -181,7 +181,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ inputs.action == 'test' && env.SOURCE_BRANCH || env.TARGET_BRANCH }}
+                  ref: ${{ inputs.commit_sha }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -234,7 +234,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.TARGET_BRANCH }}
+                  ref: ${{ inputs.commit_sha }}
                   fetch-depth: 1
 
             - name: Login to Docker Hub
@@ -318,7 +318,7 @@ jobs:
                   repository: ${{ env.REPOSITORY }}
                   ssh-key: ${{ env.SSH_KEY_GITHUB }}
                   path: ${{ env.REPO_PATH }}
-                  ref: ${{ env.TARGET_BRANCH }}
+                  ref: ${{ inputs.commit_sha }}
                   fetch-depth: 1
 
             - name: "Upload deploy script file to server"
