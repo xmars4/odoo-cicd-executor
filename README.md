@@ -14,10 +14,8 @@ For a newly Odoo repository that needs a CICD process, follow the instructions b
      - **TELEGRAM_TOKEN**: Telegram BOT token (the BOT added to this TELEGRAM_CHANNEL_ID)
 
    - *Environment variables:*
-     - **BRANCH**: Branch name of the private repo that needs CICD process
      - **DB_IMAGE_TAG**: Postgres image tag name defined in the docker-compose.yml file of the private repo
      - **ODOO_IMAGE_TAG**: Odoo image tag name defined in the docker-compose.yml file of the private repo
-     - **PATH**: Private repo GitHub path
      - **SERVER_DEPLOY_PATH**: Server deployment path, the folder containing the docker-compose.yml file
      - **SERVER_HOST**: Server IP address
      - **SERVER_ODOO_DB_NAME**: Odoo database name
