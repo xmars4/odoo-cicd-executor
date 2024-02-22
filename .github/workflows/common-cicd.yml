@@ -21,17 +21,22 @@ on:
 env:
     # Common variables
     REPO_PATH: ${{ github.workspace }}
-    ODOO_CUSTOM_ADDONS_PATH: ${{ github.workspace }}
+    SERVER_CICD_SCRIPT_FOLDER: /tmp/odoo/cicd/${{ github.repository_id }}
+    ODOO_ADDONS_PATH: ${{ github.workspace }}
     ODOO_CONFIG_FILE: ${{ github.workspace }}/.github/odoo/etc/odoo.conf
-    ODOO_DOCKER_COMPOSE_PATH: ${{ github.workspace }}/.github/odoo
-    ODOO_DOCKER_COMPOSE_FILE: ${{ github.workspace }}/.github/odoo/docker-compose.yml
+    DOCKER_FOLDER: ${{ github.workspace }}/.github/odoo
     ODOO_TEST_DATABASE_NAME: odoo_test
     ODOO_LOG_FILE_CONTAINER: /var/log/odoo/odoo.log
     ODOO_LOG_FILE_HOST: ${{ github.workspace }}/.github/odoo/logs/odoo.log
+
     CICD_ODOO_OPTIONS: ${{ github.workspace }}/.github/conf/odoo.json
     CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
-    SERVER_CICD_SCRIPT_FOLDER: /tmp/odoo/cicd/${{ github.repository_id }}
+
+    PR_NUMBER: ${{ github.event.pull_request.number }}
+    PR_URL: ${{ github.event.pull_request.html_url }}
+    PR_EVENT_NAME: ${{ github.event.action }}
+    PR_WAS_MERGED: ${{ github.event.pull_request.merged }}
 
     # ==== Workflow inputs ====
     SOURCE_BRANCH: ${{ inputs.source_branch }}
@@ -41,8 +46,8 @@ env:
     # ==== Repository secrets ====
     SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}
     PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
-    DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
-    DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
+    DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+    DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
     # ==== Environment secrets =====
     TELEGRAM_CHANNEL_ID: ${{secrets.TELEGRAM_CHANNEL_ID}}
@@ -272,6 +277,7 @@ jobs:
                   action_timeout: 30m
                   source: ${{env.SERVER_LATEST_BACKUP_FILE_PATH}}
                   target: ${{env.LOCAL_BACKUP_FILE_PATH}}
+                  port: ${{env.SERVER_SSH_PORT}}
 
             - name: "Run Integration test"
               id: run_integration_test
