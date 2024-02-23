@@ -4,7 +4,7 @@
 
 For a newly Odoo repository that needs a CICD process, follow the instructions below:
 
-1. Determine repo name *(1)*, e.g., vdx-vn/cuu-long.
+1. Determine the private repo name *(1)*, e.g., vdx-vn/cuu-long.
 1. Go to [repo settings](https://github.com/xmars4/odoo-cicd-executor/settings/secrets/actions) and create a new environment named *(1)* with the following secrets and variables:
 
    - *Environment secrets:*
