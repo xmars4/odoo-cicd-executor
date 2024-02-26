@@ -267,17 +267,8 @@ jobs:
                       bash ${{ env.SERVER_CICD_SCRIPT_FOLDER }}/server-backup.sh "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{secrets.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
 
             - name: "Download backup file"
-              uses: nicklasfrahm/scp-action@main
-              with:
-                  direction: download
-                  host: ${{ env.SERVER_HOST }}
-                  username: ${{ env.SERVER_USER }}
-                  key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  insecure_ignore_fingerprint: true
-                  action_timeout: 30m
-                  source: ${{env.SERVER_LATEST_BACKUP_FILE_PATH}}
-                  target: ${{env.LOCAL_BACKUP_FILE_PATH}}
-                  port: ${{env.SERVER_SSH_PORT}}
+              run: |
+                  scp -P ${{ env.SERVER_SSH_PORT }} -i ${{secrets.SERVER_PRIVATE_KEY}} ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
 
             - name: "Run Integration test"
               id: run_integration_test
