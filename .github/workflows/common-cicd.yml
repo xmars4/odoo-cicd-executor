@@ -271,7 +271,7 @@ jobs:
                   ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
               run: |
                   key_file_name=private_key_file
-                  touch $key_file_name && chmod 400 $key_file_name
+                  touch $key_file_name && chmod 600 $key_file_name
                   echo "$ssh_key" >> $key_file_name
                   scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $key_file_name ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
 
