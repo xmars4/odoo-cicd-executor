@@ -272,7 +272,7 @@ jobs:
               run: |
                   key_file_name=private_key_file
                   touch $key_file_name
-                  echo ${{ env.ssh_key }} > $key_file_name
+                  echo "$ssh_key" >> $key_file_name
                   scp -P ${{ env.SERVER_SSH_PORT }} -i $key_file_name ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
 
             - name: "Run Integration test"
