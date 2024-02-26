@@ -267,10 +267,12 @@ jobs:
                       bash ${{ env.SERVER_CICD_SCRIPT_FOLDER }}/server-backup.sh "${{env.SERVER_DEPLOY_PATH}}" "${{env.SERVER_ODOO_DB_NAME}}" "${{secrets.SERVER_DB_PASSWORD}}" "${{env.ODOO_IMAGE_TAG}}" ${{ env.GITHUB_RUN_ATTEMPT }} "${{ env.SERVER_BACKUP_FOLDER }}"
 
             - name: "Download backup file"
+              env:
+                  ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
               run: |
                   key_file_name=private_key_file
                   touch $key_file_name
-                  echo ${{ secrets.SERVER_PRIVATE_KEY }} > $key_file_name
+                  echo ${{ env.ssh_key }} > $key_file_name
                   scp -P ${{ env.SERVER_SSH_PORT }} -i $key_file_name ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
 
             - name: "Run Integration test"
