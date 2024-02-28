@@ -54,6 +54,7 @@ env:
     TELEGRAM_TOKEN: ${{secrets.TELEGRAM_TOKEN}}
     SERVER_PRIVATE_KEY: ${{secrets.SERVER_PRIVATE_KEY}}
     SERVER_DB_PASSWORD: ${{secrets.SERVER_DB_PASSWORD}}
+    PRIVATE_KEY_FOR_GITHUB_AUTHEN: ${{secrets.PRIVATE_KEY_FOR_GITHUB_AUTHEN}}
 
     # ===== Environment variables =====
     ODOO_IMAGE_TAG: ${{ vars.ODOO_IMAGE_TAG }}
@@ -129,6 +130,7 @@ jobs:
                   token: ${{ secrets.PAT_GITHUB }}
                   status: pending
                   context: ${{ env.commit_context }}
+
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -175,6 +177,7 @@ jobs:
                   token: ${{ secrets.PAT_GITHUB }}
                   status: pending
                   context: ${{ env.commit_context }}
+
             - name: Checkout private repo
               uses: actions/checkout@v4
               with:
@@ -249,7 +252,6 @@ jobs:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
                   key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  password: ${{ secrets.PASSWORD }}
                   port: ${{ secrets.PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
                   target: ${{ env.SERVER_CICD_SCRIPT_FOLDER }}
@@ -270,10 +272,9 @@ jobs:
               env:
                   ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
               run: |
-                  key_file_name=private_key_file
-                  touch $key_file_name && chmod 600 $key_file_name
-                  echo "$ssh_key" >> $key_file_name
-                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $key_file_name ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
+                  keyfile_path=/tmp/$(date +%s)
+                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
+                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
 
             - name: "Run Integration test"
               id: run_integration_test
@@ -297,6 +298,7 @@ jobs:
         needs: [integration-test]
         env:
             SERVER_DEPLOY_SCRIPT_PATH: /tmp/odoo/cicd/${{ github.repository_id }}/deploy.sh
+            SSH_PRIVATE_KEY_GITHUB: /tmp/odoo/cicd/${{ github.repository_id }}/github_privatekey
             commit_context: CI/CD - Deploy to Server
         steps:
             - name: Set commit status as pending
@@ -323,11 +325,20 @@ jobs:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
                   key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  password: ${{ secrets.PASSWORD }}
                   port: ${{ secrets.PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-deploy.sh
                   target: ${{ env.SERVER_CICD_SCRIPT_FOLDER }}
                   strip_components: 4
+
+            - name: "Upload GitHub private key authen to Server"
+              env:
+                  private_key_for_github_authen: ${{ secrets.PRIVATE_KEY_FOR_GITHUB_AUTHEN }}
+                  ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
+              run: |
+                  keyfile_path=/tmp/$(date +%s)
+                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
+                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$private_key_for_github_authen" "$SSH_PRIVATE_KEY_GITHUB"
+                  rsync -avz $SSH_PRIVATE_KEY_GITHUB ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$(dirname $SSH_PRIVATE_KEY_GITHUB) -e "ssh -i $keyfile_path"
 
             - name: "Deploy to server"
               id: deploy_to_server
@@ -336,14 +347,13 @@ jobs:
                   SERVER_CUSTOM_ADDONS_PATH: ${{env.SERVER_DEPLOY_PATH}}/..
                   SERVER_CONFIG_FILE: ${{env.SERVER_DEPLOY_PATH}}/etc/odoo.conf
                   SERVER_DOCKER_COMPOSE_PATH: ${{env.SERVER_DEPLOY_PATH}}
-                  GITHUB_STEP_SUMMARY: ${{ env.GITHUB_STEP_SUMMARY }}
               with:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
                   key: ${{ secrets.SERVER_PRIVATE_KEY }}
                   port: ${{ env.SERVER_SSH_PORT }}
                   script: |
-                      bash ${{ env.SERVER_CICD_SCRIPT_FOLDER }}/server-deploy.sh "${{env.SERVER_DOCKER_COMPOSE_PATH}}" "${{env.SERVER_CUSTOM_ADDONS_PATH}}" "${{env.SERVER_CONFIG_FILE}}" "dump_private_key" "${{ env.SERVER_ODOO_URL }}" "${{ env.SERVER_ODOO_DB_NAME }}"
+                      bash ${{ env.SERVER_CICD_SCRIPT_FOLDER }}/server-deploy.sh "${{env.SERVER_DOCKER_COMPOSE_PATH}}" "${{env.SERVER_CUSTOM_ADDONS_PATH}}" "${{env.SERVER_CONFIG_FILE}}" "${{ env.SSH_PRIVATE_KEY_GITHUB }}" "${{ env.SERVER_ODOO_URL }}" "${{ env.SERVER_ODOO_DB_NAME }}"
 
             - name: The Deploy step has failed
               if: ${{ failure() }}
