@@ -100,7 +100,6 @@ jobs:
                   # fixme: something wrong here: Load key "/tmp/1709116969": error in libcrypto
                   keyfile_path=/tmp/$(date +%s)
                   echo "===="
-                  cat $ssh_key
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
                   readlink -f $keyfile_path
                   cat $keyfile_path
