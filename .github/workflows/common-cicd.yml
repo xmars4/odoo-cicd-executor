@@ -67,36 +67,6 @@ env:
     SERVER_ODOO_DB_NAME: ${{ vars.SERVER_ODOO_DB_NAME }}
 
 jobs:
-    quick-test-bro:
-        name: ${{inputs.repo_name}} - Deploy server
-        runs-on: ubuntu-latest
-        environment: ${{inputs.repo_name}}
-        env:
-            SERVER_DEPLOY_SCRIPT_PATH: /tmp/odoo/cicd/${{ github.repository_id }}/deploy.sh
-            SSH_PRIVATE_KEY_GITHUB: /tmp/odoo/cicd/${{ github.repository_id }}/github_privatekey
-            commit_context: CI/CD - Deploy to Server
-        steps:
-            - name: Checkout private repo
-              uses: actions/checkout@v4
-              with:
-                  repository: ${{ env.REPOSITORY }}
-                  ssh-key: ${{ env.SSH_KEY_GITHUB }}
-                  path: ${{ env.REPO_PATH }}
-                  ref: ${{ inputs.commit_sha }}
-                  fetch-depth: 1
-
-            - name: "Upload GitHub private key authen to Server"
-              env:
-                  private_key_for_github_authen: ${{ secrets.PRIVATE_KEY_FOR_GITHUB_AUTHEN }}
-                  ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
-              run: |
-                  keyfile_path=/tmp/$(date +%s)
-                  private_key_dir=$(dirname $SSH_PRIVATE_KEY_GITHUB)
-                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
-                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$private_key_for_github_authen" "$SSH_PRIVATE_KEY_GITHUB"
-                  ssh -o StrictHostKeyChecking=no -p ${{ env.SERVER_SSH_PORT }} -i "$keyfile_path" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p $private_key_dir"
-                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path "$SSH_PRIVATE_KEY_GITHUB" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$private_key_dir
-
     # pylint-test:
     #     name: ${{inputs.repo_name}} - Pylint Test
     #     runs-on: ubuntu-latest
@@ -366,18 +336,11 @@ jobs:
                   ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
               run: |
                   keyfile_path=/tmp/$(date +%s)
+                  private_key_dir=$(dirname $SSH_PRIVATE_KEY_GITHUB)
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$private_key_for_github_authen" "$SSH_PRIVATE_KEY_GITHUB"
-                  rsync -avz $SSH_PRIVATE_KEY_GITHUB ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$(dirname $SSH_PRIVATE_KEY_GITHUB) -e "ssh -i $keyfile_path"
-
-            - name: "Download backup file"
-              env:
-                  ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  private_key_for_github_authen: ${{ secrets.PRIVATE_KEY_FOR_GITHUB_AUTHEN }}
-              run: |
-                  keyfile_path=/tmp/$(date +%s)_key
-                  bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
-                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_LATEST_BACKUP_FILE_PATH }} ${{ env.LOCAL_BACKUP_FILE_PATH }}
+                  ssh -o StrictHostKeyChecking=no -p ${{ env.SERVER_SSH_PORT }} -i "$keyfile_path" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p $private_key_dir"
+                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path "$SSH_PRIVATE_KEY_GITHUB" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$private_key_dir
 
             - name: "Deploy to server"
               id: deploy_to_server
