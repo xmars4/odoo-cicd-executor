@@ -95,7 +95,7 @@ jobs:
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$private_key_for_github_authen" "$SSH_PRIVATE_KEY_GITHUB"
                   ssh -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p $private_key_dir"
-                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path "$SSH_PRIVATE_KEY_GITHUB" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$private_key_dir
+              #   scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path "$SSH_PRIVATE_KEY_GITHUB" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$private_key_dir
 
     # pylint-test:
     #     name: ${{inputs.repo_name}} - Pylint Test
