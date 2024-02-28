@@ -91,9 +91,11 @@ jobs:
                   ssh_key: ${{ secrets.SERVER_PRIVATE_KEY }}
               run: |
                   keyfile_path=/tmp/$(date +%s)
+                  private_key_dir=$(dirname $SSH_PRIVATE_KEY_GITHUB)
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$ssh_key" "$keyfile_path"
                   bash ${{ env.CICD_UTILS_SCRIPTS_PATH }} exec create_private_keyfile_from_content "$private_key_for_github_authen" "$SSH_PRIVATE_KEY_GITHUB"
-                  rsync -avz $SSH_PRIVATE_KEY_GITHUB ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$(dirname $SSH_PRIVATE_KEY_GITHUB) -e "ssh -i $keyfile_path"
+                  ssh -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p $private_key_dir"
+                  scp -o StrictHostKeyChecking=no -P ${{ env.SERVER_SSH_PORT }} -i $keyfile_path "$SSH_PRIVATE_KEY_GITHUB" ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:$private_key_dir
 
     # pylint-test:
     #     name: ${{inputs.repo_name}} - Pylint Test
