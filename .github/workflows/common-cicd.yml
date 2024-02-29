@@ -252,7 +252,7 @@ jobs:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
                   key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  port: ${{ secrets.PORT }}
+                  port: ${{ env.SERVER_SSH_PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-backup.sh
                   target: ${{ env.SERVER_CICD_SCRIPT_FOLDER }}
                   strip_components: 4
@@ -325,7 +325,7 @@ jobs:
                   host: ${{ env.SERVER_HOST }}
                   username: ${{ env.SERVER_USER }}
                   key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                  port: ${{ secrets.PORT }}
+                  port: ${{ env.SERVER_SSH_PORT }}
                   source: ${{ env.CICD_SCRIPTS_PATH }}/server-deploy.sh
                   target: ${{ env.SERVER_CICD_SCRIPT_FOLDER }}
                   strip_components: 4
