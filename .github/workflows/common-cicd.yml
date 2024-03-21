@@ -17,6 +17,12 @@ on:
             commit_sha:
                 required: false
                 type: string
+            pr_number:
+                required: false
+                type: string
+            pr_url:
+                required: false
+                type: string
 
 env:
     # Common variables
@@ -33,15 +39,12 @@ env:
     CICD_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts
     CICD_UTILS_SCRIPTS_PATH: ${{ github.workspace }}/.github/scripts/utils.sh
 
-    PR_NUMBER: ${{ github.event.pull_request.number }}
-    PR_URL: ${{ github.event.pull_request.html_url }}
-    PR_EVENT_NAME: ${{ github.event.action }}
-    PR_WAS_MERGED: ${{ github.event.pull_request.merged }}
-
     # ==== Workflow inputs ====
     SOURCE_BRANCH: ${{ inputs.source_branch }}
     TARGET_BRANCH: ${{ inputs.target_branch }}
     REPOSITORY: ${{ inputs.repo_name }}
+    PR_NUMBER: ${{ inputs.pr_number }}
+    PR_URL: ${{ inputs.pr_url }}
 
     # ==== Repository secrets ====
     SSH_KEY_GITHUB: ${{secrets.SSH_KEY_GITHUB}}

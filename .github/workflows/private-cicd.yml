@@ -26,6 +26,14 @@ on:
                 description: "Commit SHA"
                 required: false
                 type: string
+            pr_number:
+                description: "Pull request number"
+                required: false
+                type: string
+            pr_url:
+                description: "Pull request url"
+                required: false
+                type: string
 
 jobs:
     call_common_cicd:
@@ -36,4 +44,6 @@ jobs:
             source_branch: ${{ inputs.source_branch }}
             target_branch: ${{ inputs.target_branch }}
             commit_sha: ${{ inputs.commit_sha }}
+            pr_number: ${{ inputs.pr_number }}
+            pr_url: ${{ inputs.pr_url }}
         secrets: inherit
