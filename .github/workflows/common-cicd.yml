@@ -169,7 +169,6 @@ jobs:
         runs-on: ubuntu-latest
         if: inputs.action == 'deploy'
         environment: ${{inputs.repo_name}}
-        needs: [unit-test-at-install, unit-test-post-install]
         env:
             LOCAL_BACKUP_FILE_PATH: ${{github.workspace}}/odoo.tar.gz
             SERVER_BACKUP_FOLDER: /tmp/odoo/backup/${{github.repository_id}}
@@ -251,7 +250,7 @@ jobs:
         name: ${{inputs.repo_name}} - Deploy server
         runs-on: ubuntu-latest
         environment: ${{inputs.repo_name}}
-        needs: [integration-test]
+        needs: [unit-test-at-install, unit-test-post-install, integration-test]
         env:
             SERVER_DEPLOY_SCRIPT_PATH: /tmp/odoo/cicd/${{ github.repository_id }}/deploy.sh
             SSH_PRIVATE_KEY_GITHUB: /tmp/odoo/cicd/${{ github.repository_id }}/github_privatekey
